@@ -6,6 +6,9 @@
  *    second copy is a spare.
  *  - Every trade is a straight 1-for-1 swap between two members: A hands B a
  *    spare B is missing, and B hands A a spare A is missing, in the same deal.
+ *  - Both cards in a swap must belong to the same group (Elixir Troops, Dark
+ *    Elixir Troops, Builder Base Troops, Super Troops). The game does not allow
+ *    trading across groups, so each group is solved as its own little market.
  *  - Each spare copy can only be given away once, and each missing card only
  *    needs to be filled once.
  *
@@ -36,7 +39,13 @@ function makeRandom(seed) {
 
 /**
  * @param {Array<{id: string, name?: string, counts: Record<string|number, number>}>} members
- * @param {{cardIds?: number[], timeBudgetMs?: number, seed?: number}} [options]
+ * @param {{
+ *   cardIds?: number[],
+ *   categoryOf?: Record<string|number, number> | Map<number, number>,
+ *   timeBudgetMs?: number,
+ *   seed?: number,
+ * }} [options] `categoryOf` maps a card id to its group; cards may only be
+ *   swapped against cards in the same group. Omit it to allow any pairing.
  */
 export function optimizeTrades(members, options = {}) {
   const cardIds = options.cardIds ?? collectCardIds(members);
@@ -75,8 +84,11 @@ export function optimizeTrades(members, options = {}) {
     }
   }
 
-  const upperBound = computeUpperBound(spare0, need0, n, c);
-  const state = createState(spare0, need0, n, c);
+  // Cards are bucketed by group; a swap never crosses buckets.
+  const groups = buildGroups(cardIds, options.categoryOf);
+
+  const upperBound = computeUpperBound(spare0, need0, n, c, groups);
+  const state = createState(spare0, need0, n, c, groups);
   if (n < 2 || upperBound === 0) return formatResult(state, members, cardIds, upperBound, 0);
 
   // --- search --------------------------------------------------------------
@@ -119,39 +131,62 @@ function collectCardIds(members) {
 }
 
 /**
- * Ceiling on the number of swaps, from two independent angles:
+ * Groups the card indices by their game category, as {label, indices[]}.
+ * Without a category map everything lands in one group, which means "any card
+ * may be swapped against any other".
+ */
+function buildGroups(cardIds, categoryOf) {
+  if (!categoryOf) return [{ label: 'all', indices: cardIds.map((_, k) => k) }];
+  const lookup = categoryOf instanceof Map ? (id) => categoryOf.get(id) : (id) => categoryOf[id];
+  const byCategory = new Map();
+  cardIds.forEach((id, k) => {
+    const category = lookup(id) ?? lookup(String(id)) ?? 'unknown';
+    if (!byCategory.has(category)) byCategory.set(category, []);
+    byCategory.get(category).push(k);
+  });
+  return [...byCategory.entries()].map(([label, indices]) => ({ label, indices }));
+}
+
+/**
+ * Ceiling on the number of swaps. Both halves of a swap live in the same group,
+ * so each group is bounded on its own and the bounds are added up. Within a
+ * group we take the tighter of two angles:
  *  - per card: copies that can move ≤ min(spare copies, members missing it)
- *  - per member: swaps ≤ min(their spares, their gaps)
+ *  - per member: swaps ≤ min(their spares in the group, their gaps in it)
  * Each swap moves two cards and involves two members, hence the halving.
  */
-function computeUpperBound(spare, need, n, c) {
-  let cardTransfers = 0;
-  for (let k = 0; k < c; k++) {
-    let supply = 0;
-    let demand = 0;
+function computeUpperBound(spare, need, n, c, groups) {
+  let total = 0;
+  for (const { indices } of groups) {
+    let cardTransfers = 0;
+    for (const k of indices) {
+      let supply = 0;
+      let demand = 0;
+      for (let i = 0; i < n; i++) {
+        supply += spare[i * c + k];
+        demand += need[i * c + k];
+      }
+      cardTransfers += Math.min(supply, demand);
+    }
+    let memberTransfers = 0;
     for (let i = 0; i < n; i++) {
-      supply += spare[i * c + k];
-      demand += need[i * c + k];
+      let spares = 0;
+      let gaps = 0;
+      for (const k of indices) {
+        spares += spare[i * c + k];
+        gaps += need[i * c + k];
+      }
+      memberTransfers += Math.min(spares, gaps);
     }
-    cardTransfers += Math.min(supply, demand);
+    total += Math.floor(Math.min(cardTransfers, memberTransfers) / 2);
   }
-  let memberTransfers = 0;
-  for (let i = 0; i < n; i++) {
-    let spares = 0;
-    let gaps = 0;
-    for (let k = 0; k < c; k++) {
-      spares += spare[i * c + k];
-      gaps += need[i * c + k];
-    }
-    memberTransfers += Math.min(spares, gaps);
-  }
-  return Math.floor(Math.min(cardTransfers, memberTransfers) / 2);
+  return total;
 }
 
 // --- mutable search state ---------------------------------------------------
 // 60 cards fit in two 32-bit words; the masks let us skip hopeless pairs fast.
 
-function createState(spare0, need0, n, c) {
+function createState(spare0, need0, n, c, groups = [{ indices: [...Array(c).keys()] }]) {
   const state = {
     n,
     c,
@@ -165,7 +200,14 @@ function createState(spare0, need0, n, c) {
     suppliers: new Int32Array(c), // members still holding a spare of card k
     tradeCount: new Int32Array(n),
     trades: [],
+    // One bit mask per group, so a candidate swap can be restricted to it.
+    groupLo: new Int32Array(groups.length),
+    groupHi: new Int32Array(groups.length),
+    groupCount: groups.length,
   };
+  groups.forEach(({ indices }, g) => {
+    for (const k of indices) setBit(state.groupLo, state.groupHi, g, k);
+  });
   for (let i = 0; i < n; i++) {
     for (let k = 0; k < c; k++) {
       if (state.spare[i * c + k] > 0) {
@@ -269,20 +311,32 @@ function runGreedy(state, random, jitter) {
         const bHi = state.spareHi[j] & state.needHi[i];
         if (!bLo && !bHi) continue;
 
-        const x = cheapestCard(aLo, aHi, demand, suppliers);
-        const y = cheapestCard(bLo, bHi, demand, suppliers);
-        let score =
-          cardCost(x, demand, suppliers) +
-          cardCost(y, demand, suppliers) +
-          FAIRNESS_WEIGHT * (tradeCount[i] + tradeCount[j]);
-        if (jitter) score += random() * jitter;
+        // Both halves of the swap have to come out of the same group.
+        for (let g = 0; g < state.groupCount; g++) {
+          const gLo = state.groupLo[g];
+          const gHi = state.groupHi[g];
+          const agLo = aLo & gLo;
+          const agHi = aHi & gHi;
+          if (!agLo && !agHi) continue;
+          const bgLo = bLo & gLo;
+          const bgHi = bHi & gHi;
+          if (!bgLo && !bgHi) continue;
 
-        if (score < bestScore) {
-          bestScore = score;
-          bi = i;
-          bj = j;
-          bx = x;
-          by = y;
+          const x = cheapestCard(agLo, agHi, demand, suppliers);
+          const y = cheapestCard(bgLo, bgHi, demand, suppliers);
+          let score =
+            cardCost(x, demand, suppliers) +
+            cardCost(y, demand, suppliers) +
+            FAIRNESS_WEIGHT * (tradeCount[i] + tradeCount[j]);
+          if (jitter) score += random() * jitter;
+
+          if (score < bestScore) {
+            bestScore = score;
+            bi = i;
+            bj = j;
+            bx = x;
+            by = y;
+          }
         }
       }
     }

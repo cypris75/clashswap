@@ -110,10 +110,11 @@ test('API round trip', { skip: hasDb ? false : 'DATABASE_URL not set' }, async (
     await getPool().query('delete from clans where id = $1', [other.body.clan.id]);
   });
 
-  await t.test('computes the trade plan from the brief', async () => {
-    // Alice holds 2 Barbarians and no Witch; Bob is the mirror image.
+  await t.test('computes a trade plan', async () => {
+    // Alice holds 2 Barbarians and no Giant; Bob is the mirror image.
+    // Both are Elixir Troops, so the swap is legal.
     await call('PUT', `/clans/${clanId}/members/${alice}/cards`, { counts: { 1: 2 } });
-    await call('PUT', `/clans/${clanId}/members/${bob}/cards`, { counts: { 24: 2 } });
+    await call('PUT', `/clans/${clanId}/members/${bob}/cards`, { counts: { 3: 2 } });
 
     const { body } = await call('GET', `/clans/${clanId}`);
     assert.equal(body.plan.stats.trades, 1);
@@ -122,8 +123,18 @@ test('API round trip', { skip: hasDb ? false : 'DATABASE_URL not set' }, async (
     const mine = body.plan.byMember[alice];
     assert.equal(mine.length, 1);
     assert.equal(mine[0].give, 1, 'Alice gives the Barbarian');
-    assert.equal(mine[0].get, 24, 'Alice gets the Witch');
+    assert.equal(mine[0].get, 3, 'Alice gets the Giant');
     assert.equal(mine[0].partner, bob);
+  });
+
+  await t.test('does not propose swaps across card groups', async () => {
+    // Barbarian is an Elixir Troop, Witch a Dark Elixir Troop — not tradable.
+    await call('PUT', `/clans/${clanId}/members/${alice}/cards`, { counts: { 1: 2 } });
+    await call('PUT', `/clans/${clanId}/members/${bob}/cards`, { counts: { 24: 2 } });
+
+    const { body } = await call('GET', `/clans/${clanId}`);
+    assert.equal(body.plan.stats.trades, 0);
+    assert.deepEqual(body.plan.leftovers[alice].unmatchedSpares, [1]);
   });
 
   await t.test('removes a member', async () => {

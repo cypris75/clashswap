@@ -45,7 +45,9 @@ and the full API round trip against the database.
 
 `src/lib/optimizer.mjs`. A member *needs* a card when they own zero; copies
 beyond the first are *spares*. Every trade is a straight 1-for-1 swap: A gives B
-a spare B is missing while B gives A a spare A is missing.
+a spare B is missing while B gives A a spare A is missing. Both cards must come
+from the same group — the game does not allow trading an Elixir Troop for a Dark
+Elixir Troop — so each group is really its own little market.
 
 Maximising the number of such swaps is a matching problem over shared resources
 (each spare can only go to one person, each gap only needs filling once), which

@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { optimizeTrades } from '../src/lib/optimizer.mjs';
+import { CARDS } from '../src/lib/cards.mjs';
 
 const m = (id, counts) => ({ id, name: id, counts });
 
 /** Exhaustive search over swap sequences — only viable for tiny inputs. */
-function bruteForce(members, cardIds) {
+function bruteForce(members, cardIds, categoryOf = null) {
+  const sameGroup = (x, y) => !categoryOf || categoryOf[x] === categoryOf[y];
   const state = members.map((mem) => ({
     id: mem.id,
     spare: Object.fromEntries(cardIds.map((k) => [k, Math.max(0, (mem.counts[k] || 0) - 1)])),
@@ -27,6 +29,7 @@ function bruteForce(members, cardIds) {
           if (!(s[i].spare[x] > 0 && s[j].need[x])) continue;
           for (const y of cardIds) {
             if (!(s[j].spare[y] > 0 && s[i].need[y])) continue;
+            if (!sameGroup(x, y)) continue;
             const next = s.map((p) => ({ id: p.id, spare: { ...p.spare }, need: { ...p.need } }));
             next[i].spare[x]--;
             next[j].need[x] = false;
@@ -43,11 +46,18 @@ function bruteForce(members, cardIds) {
 }
 
 /** Replays a plan against the starting counts to prove every swap is legal. */
-function validate(members, result) {
+function validate(members, result, categoryOf = null) {
   const st = new Map(
     members.map((mem) => [mem.id, { counts: { ...mem.counts } }]),
   );
   for (const t of result.trades) {
+    if (categoryOf) {
+      assert.equal(
+        categoryOf[t.aGives],
+        categoryOf[t.bGives],
+        `swap ${t.aGives} ⇄ ${t.bGives} crosses groups`,
+      );
+    }
     const a = st.get(t.a);
     const b = st.get(t.b);
     assert.ok(a && b, 'trade references a known member');
@@ -64,17 +74,19 @@ function validate(members, result) {
   return result.trades.length;
 }
 
-test('the two-player example from the brief', () => {
-  const members = [m('me', { 1: 2, 24: 0 }), m('other', { 1: 0, 24: 2 })];
-  const r = optimizeTrades(members, { cardIds: [1, 24] });
+test('the two-player example: my spare for the one I am missing', () => {
+  // Two Elixir Troops, so this is a legal swap.
+  const categoryOf = { 1: 0, 3: 0 };
+  const members = [m('me', { 1: 2, 3: 0 }), m('other', { 1: 0, 3: 2 })];
+  const r = optimizeTrades(members, { cardIds: [1, 3], categoryOf });
   assert.equal(r.stats.trades, 1);
   assert.equal(r.stats.optimal, true);
-  validate(members, r);
+  validate(members, r, categoryOf);
   const t = r.trades[0];
-  assert.deepEqual([t.aGives, t.bGives].sort(), [1, 24]);
+  assert.deepEqual([t.aGives, t.bGives].sort(), [1, 3]);
   assert.equal(r.byMember.me.length, 1);
   assert.equal(r.byMember.me[0].give, 1);
-  assert.equal(r.byMember.me[0].get, 24);
+  assert.equal(r.byMember.me[0].get, 3);
 });
 
 test('no trade when the swap is only one-directional', () => {
@@ -122,8 +134,62 @@ test('matches brute force on 300 random small clans', () => {
   assert.equal(checked, 300);
 });
 
+test('never swaps across groups', () => {
+  // Thrower (Elixir) against Druid (Dark Elixir) is not a legal trade in game.
+  const categoryOf = { 18: 0, 30: 1 };
+  const members = [m('a', { 18: 2, 30: 0 }), m('b', { 18: 0, 30: 2 })];
+
+  const unrestricted = optimizeTrades(members, { cardIds: [18, 30], timeBudgetMs: 15 });
+  assert.equal(unrestricted.stats.trades, 1, 'without groups this pairing is fine');
+
+  const r = optimizeTrades(members, { cardIds: [18, 30], categoryOf, timeBudgetMs: 15 });
+  assert.equal(r.stats.trades, 0, 'Thrower ⇄ Druid must not be proposed');
+  assert.equal(r.stats.upperBound, 0, 'and the bound knows it is impossible');
+  assert.deepEqual(r.leftovers.a.unmatchedSpares, [18]);
+  assert.deepEqual(r.leftovers.a.stillMissing, [30]);
+});
+
+test('still trades freely inside one group', () => {
+  const categoryOf = { 1: 0, 3: 0, 24: 1, 30: 1 };
+  const members = [
+    m('a', { 1: 2, 3: 0, 24: 2, 30: 0 }),
+    m('b', { 1: 0, 3: 2, 24: 0, 30: 2 }),
+  ];
+  const r = optimizeTrades(members, { cardIds: [1, 3, 24, 30], categoryOf, timeBudgetMs: 20 });
+  assert.equal(r.stats.trades, 2, 'one Elixir swap and one Dark Elixir swap');
+  assert.equal(r.stats.optimal, true);
+  validate(members, r, categoryOf);
+});
+
+test('matches brute force on 300 random grouped clans', () => {
+  let rng = 777;
+  const rand = (nMax) => {
+    rng = (rng * 1103515245 + 12345) & 0x7fffffff;
+    return rng % nMax;
+  };
+  const cardIds = [1, 2, 3, 4, 5, 6];
+  const categoryOf = { 1: 0, 2: 0, 3: 0, 4: 1, 5: 1, 6: 1 };
+  for (let trial = 0; trial < 300; trial++) {
+    const n = 2 + rand(3);
+    const members = [];
+    for (let i = 0; i < n; i++) {
+      const counts = {};
+      for (const k of cardIds) counts[k] = rand(3);
+      members.push(m(`p${i}`, counts));
+    }
+    const r = optimizeTrades(members, { cardIds, categoryOf, timeBudgetMs: 15 });
+    validate(members, r, categoryOf);
+    assert.equal(
+      r.stats.trades,
+      bruteForce(members, cardIds, categoryOf),
+      `trial ${trial}: ${JSON.stringify(members)}`,
+    );
+  }
+});
+
 test('handles a full 50-member clan quickly and legally', () => {
-  const cardIds = Array.from({ length: 60 }, (_, i) => i + 1);
+  const cardIds = CARDS.map((c) => c.id).sort((a, b) => a - b);
+  const categoryOf = Object.fromEntries(CARDS.map((c) => [c.id, c.category]));
   let rng = 99;
   const rand = (nMax) => {
     rng = (rng * 1103515245 + 12345) & 0x7fffffff;
@@ -139,9 +205,9 @@ test('handles a full 50-member clan quickly and legally', () => {
     members.push(m(`p${i}`, counts));
   }
   const started = performance.now();
-  const r = optimizeTrades(members, { cardIds });
+  const r = optimizeTrades(members, { cardIds, categoryOf });
   const ms = performance.now() - started;
-  validate(members, r);
+  validate(members, r, categoryOf);
   assert.ok(r.stats.trades > 0);
   assert.ok(ms < 4000, `optimizer took ${ms.toFixed(0)}ms`);
   console.log(

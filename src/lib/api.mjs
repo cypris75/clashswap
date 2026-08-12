@@ -7,8 +7,12 @@
  * the database credentials stay on the server.
  */
 import { query, withTransaction } from './db.mjs';
-import { CARD_IDS } from './cards.mjs';
+import { CARD_IDS, CARDS } from './cards.mjs';
 import { optimizeTrades } from './optimizer.mjs';
+
+const SORTED_CARD_IDS = [...CARD_IDS].sort((a, b) => a - b);
+// Cards can only be swapped against cards from the same group.
+const CARD_CATEGORY = new Map(CARDS.map((c) => [c.id, c.category]));
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -154,7 +158,10 @@ const PLAN_CACHE_MAX = 40;
 function cachedPlan(key, members) {
   const hit = planCache.get(key);
   if (hit) return hit;
-  const plan = optimizeTrades(members, { cardIds: [...CARD_IDS].sort((a, b) => a - b) });
+  const plan = optimizeTrades(members, {
+    cardIds: SORTED_CARD_IDS,
+    categoryOf: CARD_CATEGORY,
+  });
   if (planCache.size >= PLAN_CACHE_MAX) planCache.delete(planCache.keys().next().value);
   planCache.set(key, plan);
   return plan;

@@ -910,9 +910,7 @@ function renderTrades(me, plan, members) {
       h('h2', { text: 'Trade plan' }),
       h('p', {
         class: 'hint',
-        text: plan.stats.optimal
-          ? 'This is the maximum number of swaps possible with what the clan holds.'
-          : 'Best plan found — recalculated after every change.',
+        text: 'Cards can only be swapped inside the same group, so every swap here is Elixir for Elixir, Super for Super, and so on.',
       }),
     ),
     stats,
@@ -1042,7 +1040,7 @@ function renderLeftovers(leftovers, members) {
           h('p', {
             class: 'muted',
             style: 'font-size:.85rem;margin:4px 0 10px',
-            text: 'Everyone who is missing these already gets one from someone else.',
+            text: 'Everyone missing these either gets one from someone else, or has nothing from the same group to trade back.',
           }),
           chips(unmatchedSpares),
         )
@@ -1055,7 +1053,7 @@ function renderLeftovers(leftovers, members) {
           h('p', {
             class: 'muted',
             style: 'font-size:.85rem;margin:4px 0 10px',
-            text: `No one among the ${members.length} members has a spare of these to give.`,
+            text: `Nobody among the ${members.length} members can complete a swap for these — either no one holds a spare, or they have nothing you can give back from the same group.`,
           }),
           chips(stillMissing),
         )
