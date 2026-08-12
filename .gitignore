@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.netlify/
+.DS_Store
+npm-debug.log*
+
+# Contains the raw Supabase connection string (password!) — keep it out of git.
+supbase.md

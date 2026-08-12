@@ -1,0 +1,26 @@
+[build]
+  publish = "public"
+  command = "node scripts/gen-cards.mjs || true"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  external_node_modules = ["pg"]
+
+# Deep links like /c/<clan-uuid> are handled by the single-page app.
+[[redirects]]
+  from = "/c/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+
+[[headers]]
+  for = "/cards/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

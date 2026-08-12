@@ -1,0 +1,430 @@
+{
+  "categories": {
+    "0": "Elixir Troops",
+    "1": "Dark Elixir Troops",
+    "2": "Super Troops",
+    "3": "Builder Base Troops"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "entity": 31,
+      "category": 0,
+      "name": "Barbarian",
+      "icon": "/cards/31.png"
+    },
+    {
+      "id": 2,
+      "entity": 32,
+      "category": 0,
+      "name": "Archer",
+      "icon": "/cards/32.png"
+    },
+    {
+      "id": 3,
+      "entity": 33,
+      "category": 0,
+      "name": "Giant",
+      "icon": "/cards/33.png"
+    },
+    {
+      "id": 4,
+      "entity": 34,
+      "category": 0,
+      "name": "Goblin",
+      "icon": "/cards/34.png"
+    },
+    {
+      "id": 5,
+      "entity": 35,
+      "category": 0,
+      "name": "Wall Breaker",
+      "icon": "/cards/35.png"
+    },
+    {
+      "id": 6,
+      "entity": 36,
+      "category": 0,
+      "name": "Balloon",
+      "icon": "/cards/36.png"
+    },
+    {
+      "id": 7,
+      "entity": 37,
+      "category": 0,
+      "name": "Wizard",
+      "icon": "/cards/37.png"
+    },
+    {
+      "id": 8,
+      "entity": 38,
+      "category": 0,
+      "name": "Healer",
+      "icon": "/cards/38.png"
+    },
+    {
+      "id": 9,
+      "entity": 39,
+      "category": 0,
+      "name": "Dragon",
+      "icon": "/cards/39.png"
+    },
+    {
+      "id": 10,
+      "entity": 40,
+      "category": 0,
+      "name": "PEKKA",
+      "icon": "/cards/40.png"
+    },
+    {
+      "id": 11,
+      "entity": 41,
+      "category": 0,
+      "name": "Baby Dragon",
+      "icon": "/cards/41.png"
+    },
+    {
+      "id": 12,
+      "entity": 42,
+      "category": 0,
+      "name": "Miner",
+      "icon": "/cards/42.png"
+    },
+    {
+      "id": 13,
+      "entity": 103,
+      "category": 0,
+      "name": "Electro Dragon",
+      "icon": "/cards/103.png"
+    },
+    {
+      "id": 14,
+      "entity": 121,
+      "category": 0,
+      "name": "Yeti",
+      "icon": "/cards/121.png"
+    },
+    {
+      "id": 15,
+      "entity": 133,
+      "category": 0,
+      "name": "Dragon Rider",
+      "icon": "/cards/133.png"
+    },
+    {
+      "id": 16,
+      "entity": 138,
+      "category": 0,
+      "name": "Electro Titan",
+      "icon": "/cards/138.png"
+    },
+    {
+      "id": 17,
+      "entity": 156,
+      "category": 0,
+      "name": "Root Rider",
+      "icon": "/cards/156.png"
+    },
+    {
+      "id": 18,
+      "entity": 204,
+      "category": 0,
+      "name": "Thrower",
+      "icon": "/cards/204.png"
+    },
+    {
+      "id": 19,
+      "entity": 241,
+      "category": 0,
+      "name": "Meteor Golem",
+      "icon": "/cards/241.png"
+    },
+    {
+      "id": 20,
+      "entity": 53,
+      "category": 1,
+      "name": "Minion",
+      "icon": "/cards/53.png"
+    },
+    {
+      "id": 21,
+      "entity": 54,
+      "category": 1,
+      "name": "Hog Rider",
+      "icon": "/cards/54.png"
+    },
+    {
+      "id": 22,
+      "entity": 55,
+      "category": 1,
+      "name": "Valkyrie",
+      "icon": "/cards/55.png"
+    },
+    {
+      "id": 23,
+      "entity": 56,
+      "category": 1,
+      "name": "Golem",
+      "icon": "/cards/56.png"
+    },
+    {
+      "id": 24,
+      "entity": 57,
+      "category": 1,
+      "name": "Witch",
+      "icon": "/cards/57.png"
+    },
+    {
+      "id": 25,
+      "entity": 58,
+      "category": 1,
+      "name": "Lava Hound",
+      "icon": "/cards/58.png"
+    },
+    {
+      "id": 26,
+      "entity": 59,
+      "category": 1,
+      "name": "Bowler",
+      "icon": "/cards/59.png"
+    },
+    {
+      "id": 27,
+      "entity": 111,
+      "category": 1,
+      "name": "Ice Golem",
+      "icon": "/cards/111.png"
+    },
+    {
+      "id": 28,
+      "entity": 123,
+      "category": 1,
+      "name": "Headhunter",
+      "icon": "/cards/123.png"
+    },
+    {
+      "id": 29,
+      "entity": 151,
+      "category": 1,
+      "name": "Apprentice Warden",
+      "icon": "/cards/151.png"
+    },
+    {
+      "id": 30,
+      "entity": 197,
+      "category": 1,
+      "name": "Druid",
+      "icon": "/cards/197.png"
+    },
+    {
+      "id": 31,
+      "entity": 218,
+      "category": 1,
+      "name": "Furnace",
+      "icon": "/cards/218.png"
+    },
+    {
+      "id": 32,
+      "entity": 282,
+      "category": 1,
+      "name": "Rubble Witch",
+      "icon": "/cards/282.png"
+    },
+    {
+      "id": 33,
+      "entity": 177,
+      "category": 2,
+      "name": "Super Barbarian",
+      "icon": "/cards/177.png"
+    },
+    {
+      "id": 34,
+      "entity": 178,
+      "category": 2,
+      "name": "Super Archer",
+      "icon": "/cards/178.png"
+    },
+    {
+      "id": 35,
+      "entity": 179,
+      "category": 2,
+      "name": "Super Giant",
+      "icon": "/cards/179.png"
+    },
+    {
+      "id": 36,
+      "entity": 180,
+      "category": 2,
+      "name": "Sneaky Goblin",
+      "icon": "/cards/180.png"
+    },
+    {
+      "id": 37,
+      "entity": 181,
+      "category": 2,
+      "name": "Super Wall Breaker",
+      "icon": "/cards/181.png"
+    },
+    {
+      "id": 38,
+      "entity": 182,
+      "category": 2,
+      "name": "Rocket Balloon",
+      "icon": "/cards/182.png"
+    },
+    {
+      "id": 39,
+      "entity": 183,
+      "category": 2,
+      "name": "Super Wizard",
+      "icon": "/cards/183.png"
+    },
+    {
+      "id": 40,
+      "entity": 184,
+      "category": 2,
+      "name": "Super Dragon",
+      "icon": "/cards/184.png"
+    },
+    {
+      "id": 41,
+      "entity": 185,
+      "category": 2,
+      "name": "Inferno Dragon",
+      "icon": "/cards/185.png"
+    },
+    {
+      "id": 42,
+      "entity": 191,
+      "category": 2,
+      "name": "Super Miner",
+      "icon": "/cards/191.png"
+    },
+    {
+      "id": 43,
+      "entity": 221,
+      "category": 2,
+      "name": "Super Yeti",
+      "icon": "/cards/221.png"
+    },
+    {
+      "id": 44,
+      "entity": 186,
+      "category": 2,
+      "name": "Super Minion",
+      "icon": "/cards/186.png"
+    },
+    {
+      "id": 45,
+      "entity": 192,
+      "category": 2,
+      "name": "Super Hog Rider",
+      "icon": "/cards/192.png"
+    },
+    {
+      "id": 46,
+      "entity": 187,
+      "category": 2,
+      "name": "Super Valkyrie",
+      "icon": "/cards/187.png"
+    },
+    {
+      "id": 47,
+      "entity": 188,
+      "category": 2,
+      "name": "Super Witch",
+      "icon": "/cards/188.png"
+    },
+    {
+      "id": 48,
+      "entity": 189,
+      "category": 2,
+      "name": "Ice Hound",
+      "icon": "/cards/189.png"
+    },
+    {
+      "id": 49,
+      "entity": 190,
+      "category": 2,
+      "name": "Super Bowler",
+      "icon": "/cards/190.png"
+    },
+    {
+      "id": 50,
+      "entity": 90,
+      "category": 3,
+      "name": "Raged Barbarian",
+      "icon": "/cards/90.png"
+    },
+    {
+      "id": 51,
+      "entity": 91,
+      "category": 3,
+      "name": "Sneaky Archer",
+      "icon": "/cards/91.png"
+    },
+    {
+      "id": 52,
+      "entity": 92,
+      "category": 3,
+      "name": "Boxer Giant",
+      "icon": "/cards/92.png"
+    },
+    {
+      "id": 53,
+      "entity": 93,
+      "category": 3,
+      "name": "Beta Minion",
+      "icon": "/cards/93.png"
+    },
+    {
+      "id": 54,
+      "entity": 94,
+      "category": 3,
+      "name": "Bomber",
+      "icon": "/cards/94.png"
+    },
+    {
+      "id": 55,
+      "entity": 95,
+      "category": 3,
+      "name": "BB Baby Dragon",
+      "icon": "/cards/95.png"
+    },
+    {
+      "id": 56,
+      "entity": 96,
+      "category": 3,
+      "name": "Cannon Cart",
+      "icon": "/cards/96.png"
+    },
+    {
+      "id": 57,
+      "entity": 97,
+      "category": 3,
+      "name": "Night Witch",
+      "icon": "/cards/97.png"
+    },
+    {
+      "id": 58,
+      "entity": 98,
+      "category": 3,
+      "name": "Drop Ship",
+      "icon": "/cards/98.png"
+    },
+    {
+      "id": 59,
+      "entity": 101,
+      "category": 3,
+      "name": "Power PEKKA",
+      "icon": "/cards/101.png"
+    },
+    {
+      "id": 60,
+      "entity": 113,
+      "category": 3,
+      "name": "Hog Glider",
+      "icon": "/cards/113.png"
+    }
+  ]
+}

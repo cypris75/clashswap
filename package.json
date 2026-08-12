@@ -1,0 +1,20 @@
+{
+  "name": "clashswap",
+  "version": "1.0.0",
+  "description": "Coordinate Clash of Clans card trades inside a clan: everyone lists what they own, the app works out who should swap what with whom.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "test": "node --test 'test/*.test.mjs'",
+    "migrate": "node scripts/migrate.mjs",
+    "seed": "node scripts/seed.mjs",
+    "gen:cards": "node scripts/gen-cards.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}
