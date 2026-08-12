@@ -231,6 +231,83 @@
       "icon": "/cards/282.png"
     },
     {
+      "id": 50,
+      "entity": 90,
+      "category": 3,
+      "name": "Raged Barbarian",
+      "icon": "/cards/90.png"
+    },
+    {
+      "id": 51,
+      "entity": 91,
+      "category": 3,
+      "name": "Sneaky Archer",
+      "icon": "/cards/91.png"
+    },
+    {
+      "id": 52,
+      "entity": 92,
+      "category": 3,
+      "name": "Boxer Giant",
+      "icon": "/cards/92.png"
+    },
+    {
+      "id": 53,
+      "entity": 93,
+      "category": 3,
+      "name": "Beta Minion",
+      "icon": "/cards/93.png"
+    },
+    {
+      "id": 54,
+      "entity": 94,
+      "category": 3,
+      "name": "Bomber",
+      "icon": "/cards/94.png"
+    },
+    {
+      "id": 55,
+      "entity": 95,
+      "category": 3,
+      "name": "BB Baby Dragon",
+      "icon": "/cards/95.png"
+    },
+    {
+      "id": 56,
+      "entity": 96,
+      "category": 3,
+      "name": "Cannon Cart",
+      "icon": "/cards/96.png"
+    },
+    {
+      "id": 57,
+      "entity": 97,
+      "category": 3,
+      "name": "Night Witch",
+      "icon": "/cards/97.png"
+    },
+    {
+      "id": 58,
+      "entity": 98,
+      "category": 3,
+      "name": "Drop Ship",
+      "icon": "/cards/98.png"
+    },
+    {
+      "id": 59,
+      "entity": 101,
+      "category": 3,
+      "name": "Power PEKKA",
+      "icon": "/cards/101.png"
+    },
+    {
+      "id": 60,
+      "entity": 113,
+      "category": 3,
+      "name": "Hog Glider",
+      "icon": "/cards/113.png"
+    },
+    {
       "id": 33,
       "entity": 177,
       "category": 2,
@@ -348,83 +425,6 @@
       "category": 2,
       "name": "Super Bowler",
       "icon": "/cards/190.png"
-    },
-    {
-      "id": 50,
-      "entity": 90,
-      "category": 3,
-      "name": "Raged Barbarian",
-      "icon": "/cards/90.png"
-    },
-    {
-      "id": 51,
-      "entity": 91,
-      "category": 3,
-      "name": "Sneaky Archer",
-      "icon": "/cards/91.png"
-    },
-    {
-      "id": 52,
-      "entity": 92,
-      "category": 3,
-      "name": "Boxer Giant",
-      "icon": "/cards/92.png"
-    },
-    {
-      "id": 53,
-      "entity": 93,
-      "category": 3,
-      "name": "Beta Minion",
-      "icon": "/cards/93.png"
-    },
-    {
-      "id": 54,
-      "entity": 94,
-      "category": 3,
-      "name": "Bomber",
-      "icon": "/cards/94.png"
-    },
-    {
-      "id": 55,
-      "entity": 95,
-      "category": 3,
-      "name": "BB Baby Dragon",
-      "icon": "/cards/95.png"
-    },
-    {
-      "id": 56,
-      "entity": 96,
-      "category": 3,
-      "name": "Cannon Cart",
-      "icon": "/cards/96.png"
-    },
-    {
-      "id": 57,
-      "entity": 97,
-      "category": 3,
-      "name": "Night Witch",
-      "icon": "/cards/97.png"
-    },
-    {
-      "id": 58,
-      "entity": 98,
-      "category": 3,
-      "name": "Drop Ship",
-      "icon": "/cards/98.png"
-    },
-    {
-      "id": 59,
-      "entity": 101,
-      "category": 3,
-      "name": "Power PEKKA",
-      "icon": "/cards/101.png"
-    },
-    {
-      "id": 60,
-      "entity": 113,
-      "category": 3,
-      "name": "Hog Glider",
-      "icon": "/cards/113.png"
     }
   ]
 }

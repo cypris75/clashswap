@@ -13,6 +13,9 @@ const CATEGORIES = {
   3: 'Builder Base Troops',
 };
 
+// Order the groups are shown in — Super Troops sit last, after Builder Base.
+const CATEGORY_ORDER = [0, 1, 3, 2];
+
 const html = readFileSync(resolve(root, 'supbase.md'), 'utf8');
 const re = /data-card-number="(\d+)" data-entity-id="(\d+)" data-type-id="(\d+)" title="([^"]+)"/g;
 
@@ -24,7 +27,11 @@ for (const [, number, entity, type, name] of html.matchAll(re)) {
   seen.add(id);
   cards.push({ id, entity: Number(entity), category: Number(type), name });
 }
-cards.sort((a, b) => a.id - b.id);
+// Display order: by group first, then by the game's own card number.
+cards.sort(
+  (a, b) =>
+    CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category) || a.id - b.id,
+);
 
 if (cards.length !== 60) throw new Error(`Expected 60 cards, parsed ${cards.length}`);
 
